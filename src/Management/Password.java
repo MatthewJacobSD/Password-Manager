@@ -1,28 +1,44 @@
 package Management;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Password {
-    String password;
-    private String passwordHash;
-    private List<Password> passwords;
+    private String password;
+    private final String newPassword;
+    private final String confirmPassword;
 
-
-    public Password(String password){
+    public Password(String newPassword, String confirmPassword) {
         this.password = password;
-        this.passwords = new ArrayList<>();
+        this.newPassword = newPassword;
+        this.confirmPassword = confirmPassword;
     }
 
     public String getPassword(){
         return password;
     }
 
-    public void setPassword(String password){
+    public void setPassword(String newPassword){
         this.password = password;
     }
 
-    public String getPasswordHash(){
-        return passwordHash;
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    // Method to validate password
+    public boolean isValidPassword(String password) {
+        if (password.length() < 8) {
+            return false;
+        }
+        boolean hasUppercase = !password.equals(password.toLowerCase());
+        boolean hasSymbol = password.matches(".*[!@#$%^&*(),.?\":{}|<>].*");
+        return hasUppercase && hasSymbol;
+    }
+
+    // Hash the password
+    public static String hashPassword(String password) {
+        return Integer.toHexString(password.hashCode());
     }
 }
