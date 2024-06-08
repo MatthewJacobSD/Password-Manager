@@ -6,7 +6,7 @@ public class Password {
     private final String confirmPassword;
 
     public Password(String newPassword, String confirmPassword) {
-        this.password = password;
+        this.password = newPassword; // Assign newPassword to password
         this.newPassword = newPassword;
         this.confirmPassword = confirmPassword;
     }
@@ -16,7 +16,7 @@ public class Password {
     }
 
     public void setPassword(String newPassword){
-        this.password = password;
+        this.password = newPassword; // Set password to the provided newPassword
     }
 
     public String getNewPassword() {

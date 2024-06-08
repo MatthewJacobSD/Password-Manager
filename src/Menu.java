@@ -6,6 +6,9 @@ import Settings.WindowSettings;
 import javax.swing.*;
 import java.awt.*;
 
+import static Management.User_Auth.currentUsername;
+
+
 public class Menu extends WindowSettings.GUIComponent {
 
     public static void main(String[] args) {
@@ -58,13 +61,11 @@ public class Menu extends WindowSettings.GUIComponent {
     }
 
     private static JMenu getAccountMenu() {
-        JMenu accountMenu = new JMenu("Account");
+        JMenu accountMenu = new JMenu(currentUsername);
         JMenuItem changeAccount = new JMenuItem("Change Account");
-        JMenuItem changePassword = new JMenuItem("Change Password");
-        changePassword.addActionListener(e -> {
-            ChangePassword changePasswordFrame = new ChangePassword("Change Password", new Password("", ""));
-            changePasswordFrame.setVisible(true);
-        });
+
+        // Use the stored currentUsername and currentPassword
+        JMenuItem changePassword = currentDetails();
 
         JMenuItem logOut = new JMenuItem("Log out");
         logOut.addActionListener(e -> System.exit(0));
@@ -74,5 +75,17 @@ public class Menu extends WindowSettings.GUIComponent {
         accountMenu.add(logOut);
 
         return accountMenu;
+    }
+
+    private static JMenuItem currentDetails() {
+        String currentPassword = User_Auth.currentPassword;
+        Password currentPasswordObject = new Password(currentPassword, currentPassword);
+
+        JMenuItem changePassword = new JMenuItem("Change Password");
+        changePassword.addActionListener(e -> {
+            ChangePassword changePasswordFrame = new ChangePassword("Change Password", currentPasswordObject);
+            changePasswordFrame.setVisible(true);
+        });
+        return changePassword;
     }
 }

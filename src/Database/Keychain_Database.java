@@ -1,5 +1,7 @@
 package Database;
 
+import Management.Password;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,4 +48,35 @@ public class Keychain_Database {
         }
         return false;
     }
+
+    // Update password for a given username
+    public static boolean updatePassword(String username, String newPassword) {
+        List<String[]> passwords = readPasswords();
+        boolean updated = false;
+        String hashPassword = Password.hashPassword(newPassword);
+
+        for (String[] passwordInfo : passwords) {
+            if (passwordInfo[0].equals(username)) {
+                passwordInfo[1] = newPassword;
+                passwordInfo[2] = hashPassword;
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(KEYCHAIN_FILE))) {
+                for (String[] passwordInfo : passwords) {
+                    writer.write(passwordInfo[0] + ": " + passwordInfo[1] + " - " + passwordInfo[2]);
+                    writer.newLine();
+                }
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
 }

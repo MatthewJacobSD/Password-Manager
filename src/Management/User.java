@@ -3,7 +3,7 @@ package Management;
 public class User {
     private final String email;
     private final String username;
-    private final String password;
+    private String password;
 
     public User(String email, String username, String password) {
         this.email = email;
@@ -20,6 +20,10 @@ public class User {
     }
 
     public String getPassword() {
-        return password;
+        return password; // Simply return the password
+    }
+
+    public void setPassword(String newPassword) {
+        this.password = newPassword;
     }
 }

@@ -6,7 +6,7 @@ public class PasswordUsage {
     private Password password;
 
     public PasswordUsage(Password password){
-        this.password = password;
+        setPassword(password);
     }
 
     public Password getPassword(){

@@ -2,10 +2,11 @@ package Database;
 
 import Management.User;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Account_Database {
 
@@ -21,6 +22,7 @@ public class Account_Database {
         }
         return false;
     }
+
 
     public static List<User> readAccounts() {
         List<User> users = new ArrayList<>();
@@ -40,6 +42,35 @@ public class Account_Database {
         }
         return users;
     }
+
+    // Update password for a given email
+    public static boolean updateAccountPassword(String username, String newPassword) {
+        List<User> users = readAccounts();
+        boolean updated = false;
+
+        for (User user : users) {
+            if (user.getUsername().equals(username)) {
+                user.setPassword(newPassword);
+                updated = true;
+                break;
+            }
+        }
+
+        if (updated) {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(ACCOUNT_FILE))) {
+                for (User user : users) {
+                    writer.write(user.getEmail() + " - " + user.getUsername() + ": " + user.getPassword());
+                    writer.newLine();
+                }
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
+    }
+
 
     // Verify email format
     public static boolean isValidEmail(String email) {

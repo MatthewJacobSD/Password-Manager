@@ -2,12 +2,14 @@ package Management;
 
 import Settings.WindowSettings;
 import Database.Account_Database;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
 public class User_Auth {
+    public static String currentUsername; // To store the current logged-in username
+    public static String currentPassword; // To store the current logged-in password
+
     public static void main(String[] args) {
         new Login(); // Start the application with the login page
     }
@@ -41,6 +43,8 @@ public class User_Auth {
 
                 // Validate login credentials
                 if (validateLogin(username, passwordUsage)) {
+                    currentUsername = username; // Store the current username
+                    currentPassword = password; // Store the current password
                     new Menu(); // Open dashboard if login is successful
                 } else {
                     JOptionPane.showMessageDialog(null, "Invalid login credentials. Please try again.");
@@ -50,6 +54,7 @@ public class User_Auth {
 
             // Register button
             JButton registerButton = createButton("Register", e -> {
+                dispose();
                 new Register(); // Open register GUI when clicked
             });
             WindowSettings.GUIComponent.addComponentToPane(panel, registerButton, gbc, 1, labels.length, 1);
@@ -102,7 +107,7 @@ public class User_Auth {
                 PasswordUsage passwordUsage = new PasswordUsage(passwordObj);
 
                 if (validateRegistration(email, username, passwordUsage)) {
-                    User user = new User(username, email, Password.hashPassword(password));
+                    User user = new User(username, email, password);
                     if (Account_Database.saveAccount(user)) {
                         JOptionPane.showMessageDialog(null, "Registration successful. Welcome " + username);
                         dispose();
