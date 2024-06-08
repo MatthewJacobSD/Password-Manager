@@ -1,5 +1,6 @@
 import Management.ChangePassword;
 import Management.Password;
+import Management.User_Auth;
 import Settings.WindowSettings;
 
 import javax.swing.*;

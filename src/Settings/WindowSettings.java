@@ -2,6 +2,7 @@ package Settings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 
 import static java.awt.Font.BOLD;
 import static java.awt.Font.PLAIN;
@@ -11,6 +12,7 @@ public class WindowSettings {
     private static final Font DEFAULT_FONT = new Font("Arial", PLAIN, 18);
 
     public static void main(String[] args) {
+        // This main method can be used for testing if needed
     }
 
     // Window Setup
@@ -23,13 +25,21 @@ public class WindowSettings {
             applyFonts(this.getContentPane());
         }
 
-        protected void addComponentToPane(JPanel panel, JComponent component, GridBagConstraints gbc, int x, int y, int width) {
+        protected static void addComponentToPane(JPanel panel, JComponent component, GridBagConstraints gbc, int x, int y, int width) {
             gbc.gridx = x;
             gbc.gridy = y;
             gbc.gridwidth = width;
             gbc.insets = new Insets(10, 10, 10, 10); // Padding
             gbc.fill = GridBagConstraints.HORIZONTAL; // Fill horizontally
             panel.add(component, gbc);
+        }
+
+        protected static void initComponents(JPanel panel, GridBagConstraints gbc, String[] labels, JComponent[] fields) {
+            for (int i = 0; i < labels.length; i++) {
+                JLabel label = new JLabel(labels[i]);
+                addComponentToPane(panel, label, gbc, 0, i, 1);
+                addComponentToPane(panel, fields[i], gbc, 1, i, 2);
+            }
         }
 
         protected void applyFonts(Container container) {
@@ -44,6 +54,13 @@ public class WindowSettings {
                     applyFonts((Container) component);
                 }
             }
+        }
+
+        // Method to create a button with specified text and action listener
+        protected JButton createButton(String text, ActionListener actionListener) {
+            JButton button = new JButton(text);
+            button.addActionListener(actionListener);
+            return button;
         }
     }
 }
