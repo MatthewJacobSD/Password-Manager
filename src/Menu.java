@@ -61,7 +61,7 @@ public class Menu extends WindowSettings.GUIComponent {
     }
 
     private static JMenu getAccountMenu() {
-        JMenu accountMenu = new JMenu(currentUsername);
+        JMenu accountMenu = new JMenu("Account");
         JMenuItem changeAccount = new JMenuItem("Change Account");
 
         // Use the stored currentUsername and currentPassword
