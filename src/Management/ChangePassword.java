@@ -1,28 +1,28 @@
 package Management;
 
+import DataSecurity.Account_Database;
+import DataSecurity.Keychain_Database;
+import DataSecurity.SecurityManager;
 import Settings.WindowSettings;
-import Database.Account_Database;
-import Database.Keychain_Database;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Arrays;
-import java.util.List;
 
 public class ChangePassword extends WindowSettings.GUIComponent {
 
     private boolean passwordDeleted = false;
-    private final Password password;
+    private final PasswordUsage passwordUsage;
 
     private JPasswordField oldPasswordField;
     private JPasswordField newPasswordField;
     private JPasswordField confirmPasswordField;
 
-    public ChangePassword(String title, Password password) {
+    public ChangePassword(String title, PasswordUsage passwordUsage) {
         super(title);
-        this.password = password;
+        this.passwordUsage = passwordUsage;
         setSize(400, 300);
         setLocationRelativeTo(null);
         initComponents();
@@ -56,9 +56,8 @@ public class ChangePassword extends WindowSettings.GUIComponent {
         panel.add(confirmPasswordField, gbc);
         gbc.gridy++;
 
-        JButton deletePasswordButton = DeleteButton();
-
-        JButton submitButton = SubmitButton();
+        JButton deletePasswordButton = createDeleteButton();
+        JButton submitButton = createSubmitButton();
 
         gbc.gridx = 0;
         panel.add(deletePasswordButton, gbc);
@@ -79,7 +78,7 @@ public class ChangePassword extends WindowSettings.GUIComponent {
         add(panel, BorderLayout.CENTER);
     }
 
-    private JButton SubmitButton() {
+    private JButton createSubmitButton() {
         JButton submitButton = new JButton("Submit");
         submitButton.addActionListener(e -> {
             char[] newPasswordChars = newPasswordField.getPassword();
@@ -95,13 +94,25 @@ public class ChangePassword extends WindowSettings.GUIComponent {
             }
             String newPassword = new String(newPasswordChars); // Convert char array to String
 
+            // Validate the old password before updating
+            if (!SecurityManager.verifyPassword(UserAuth.currentUsername, new String(oldPasswordField.getPassword()))) {
+                JOptionPane.showMessageDialog(this, "Old password is incorrect.");
+                return;
+            }
+
+            // Validate the new password strength
+            if (SecurityManager.isnotPasswordStrong(newPassword)) {
+                JOptionPane.showMessageDialog(this, "New password is not strong enough. It must be at least 8 characters long, contain an uppercase letter, and a special character.");
+                return;
+            }
+
             // Update the password in Account_Database and Keychain_Database
-            ReadAccountsFiles(newPassword);
+            updatePassword(newPassword);
         });
         return submitButton;
     }
 
-    private JButton DeleteButton() {
+    private JButton createDeleteButton() {
         JButton deletePasswordButton = new JButton("Delete Password");
         deletePasswordButton.addActionListener(e -> {
             int result = JOptionPane.showConfirmDialog(ChangePassword.this, "Are you sure you want to delete the password?", "Confirmation", JOptionPane.YES_NO_OPTION);
@@ -123,38 +134,39 @@ public class ChangePassword extends WindowSettings.GUIComponent {
                 if (!Arrays.equals(newPasswordField.getPassword(), confirmPasswordField.getPassword())) {
                     JOptionPane.showMessageDialog(ChangePassword.this, "New password and confirm password do not match.");
                 } else {
-                    String newPassword = Arrays.toString(newPasswordField.getPassword());
-                    password.setPassword(newPassword);
+                    String newPassword = new String(newPasswordField.getPassword());
 
-                    // Update the password in Account_Database and Keychain_Database
-                    ReadAccountsFiles(newPassword);
+                    // Validate the new password strength
+                    if (SecurityManager.isnotPasswordStrong(newPassword)) {
+                        JOptionPane.showMessageDialog(this, "New password is not strong enough. It must be at least 8 characters long, contain an uppercase letter, and a special character.");
+                        return;
+                    }
+
+                    updatePassword(newPassword);
                     break;
                 }
             } else {
-                setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+                dispose();
                 break;
             }
         }
     }
 
-    private void ReadAccountsFiles(String newPassword) {
-        List<User> users = Account_Database.readAccounts();
-        for (User user : users) {
-            if (user.getUsername().equals(User_Auth.currentUsername)) {
-                user.setPassword(newPassword);
-                Account_Database.saveAccount(user);
-                Keychain_Database.writePassword(user.getUsername(), newPassword, hashPassword(newPassword));
-                break;
-            }
+    private void updatePassword(String newPassword) {
+        String username = passwordUsage.getUsername();
+
+        // Hash the new password
+        String hashedPassword = SecurityManager.hashPassword(newPassword);
+
+        // Update the password in Account_Database and Keychain_Database
+        if (Account_Database.updateAccountPassword(username, hashedPassword) &&
+                Keychain_Database.updatePassword(username, hashedPassword)) {
+            JOptionPane.showMessageDialog(this, "Password updated successfully.");
+            UserAuth.currentPassword = newPassword;
+            dispose();
+            new Menu();
+        } else {
+            JOptionPane.showMessageDialog(this, "Failed to update password.");
         }
-
-        JOptionPane.showMessageDialog(ChangePassword.this, "Password Changed Successfully");
-        dispose();
-    }
-
-    // Add a method to hash the password (dummy implementation for this example)
-    private String hashPassword(String password) {
-        // Implement your hashing logic here
-        return Integer.toString(password.hashCode());
     }
 }

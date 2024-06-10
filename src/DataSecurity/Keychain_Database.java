@@ -1,6 +1,4 @@
-package Database;
-
-import Management.Password;
+package DataSecurity;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -8,17 +6,19 @@ import java.util.List;
 
 public class Keychain_Database {
 
-    private static final String KEYCHAIN_FILE = "keychain.txt";
+    private static final String KEYCHAIN_FILE = "Keychain.txt";
 
-    public static void writePassword(String username, String password, String hashPassword) {
+    // Write password details to file
+    public static void writePassword(String username, String password, String hashPassword, String generatedPassword) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(KEYCHAIN_FILE, true))) {
-            writer.write(username + ": " + password + " - " + hashPassword);
+            writer.write(username + ": " + password + " [" + hashPassword + "] - (" + generatedPassword + ")");
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    // Read password details from file
     public static List<String[]> readPasswords() {
         List<String[]> passwords = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(KEYCHAIN_FILE))) {
@@ -26,10 +26,17 @@ public class Keychain_Database {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(": ");
                 if (data.length == 2) {
-                    String[] userInfo = data[1].split(" - ");
+                    String[] userInfo = data[1].split(" \\[");
+                    String username = data[0];
                     if (userInfo.length == 2) {
-                        String[] passwordInfo = {data[0], userInfo[0], userInfo[1]};
-                        passwords.add(passwordInfo);
+                        String password = userInfo[0];
+                        String[] hashGen = userInfo[1].split("] - \\(");
+                        if (hashGen.length == 2) {
+                            String hashPassword = hashGen[0];
+                            String generatedPassword = hashGen[1].substring(0, hashGen[1].length() - 1);
+                            String[] passwordInfo = {username, password, hashPassword, generatedPassword};
+                            passwords.add(passwordInfo);
+                        }
                     }
                 }
             }
@@ -39,21 +46,11 @@ public class Keychain_Database {
         return passwords;
     }
 
-    public static boolean validatePassword(String username, String password) {
-        List<String[]> passwords = readPasswords();
-        for (String[] passwordInfo : passwords) {
-            if (passwordInfo[0].equals(username) && passwordInfo[1].equals(password)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     // Update password for a given username
     public static boolean updatePassword(String username, String newPassword) {
         List<String[]> passwords = readPasswords();
         boolean updated = false;
-        String hashPassword = Password.hashPassword(newPassword);
+        String hashPassword = SecurityManager.hashPassword(newPassword);
 
         for (String[] passwordInfo : passwords) {
             if (passwordInfo[0].equals(username)) {
@@ -67,7 +64,7 @@ public class Keychain_Database {
         if (updated) {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(KEYCHAIN_FILE))) {
                 for (String[] passwordInfo : passwords) {
-                    writer.write(passwordInfo[0] + ": " + passwordInfo[1] + " - " + passwordInfo[2]);
+                    writer.write(passwordInfo[0] + ": " + passwordInfo[1] + " [" + passwordInfo[2] + "] - (" + passwordInfo[3] + ")");
                     writer.newLine();
                 }
                 return true;
@@ -78,5 +75,4 @@ public class Keychain_Database {
 
         return false;
     }
-
 }

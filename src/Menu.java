@@ -1,13 +1,12 @@
 import Management.ChangePassword;
-import Management.Password;
-import Management.User_Auth;
+import Management.PasswordUsage;
+import Management.UserAuth;
 import Settings.WindowSettings;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static Management.User_Auth.currentUsername;
-
+import static Management.UserAuth.currentUsername;
 
 public class Menu extends WindowSettings.GUIComponent {
 
@@ -39,8 +38,20 @@ public class Menu extends WindowSettings.GUIComponent {
 
         // Left-aligned menus
         JMenu aboutMenu = new JMenu("About");
-        JMenuItem contributorsItem = new JMenuItem("Contributors");
-        aboutMenu.add(contributorsItem);
+
+        // Add contributors submenu
+        JMenu contributorsMenu = new JMenu("Contributors");
+        String[] contributors = {
+                "Lead project: Findlay",
+                "Front-end developers: Findlay, Stefano, Matthew",
+                "Back-end developers: Stefano, Matthew",
+                "Project Manager: Findlay, Ash",
+                "Testers: Everyone"
+        };
+        for (String contributor : contributors) {
+            contributorsMenu.add(new JMenuItem(contributor));
+        }
+        aboutMenu.add(contributorsMenu);
 
         // Add left-aligned menu first
         menuBar.add(aboutMenu);
@@ -50,11 +61,6 @@ public class Menu extends WindowSettings.GUIComponent {
 
         // Right-aligned menus
         JMenu accountMenu = getAccountMenu();
-
-        // Add glue to push subsequent menus to the right
-        menuBar.add(Box.createHorizontalGlue());
-
-        // Add right-aligned menu
         menuBar.add(accountMenu);
 
         setJMenuBar(menuBar);
@@ -63,10 +69,7 @@ public class Menu extends WindowSettings.GUIComponent {
     private static JMenu getAccountMenu() {
         JMenu accountMenu = new JMenu("Account");
         JMenuItem changeAccount = new JMenuItem("Change Account");
-
-        // Use the stored currentUsername and currentPassword
         JMenuItem changePassword = currentDetails();
-
         JMenuItem logOut = new JMenuItem("Log out");
         logOut.addActionListener(e -> System.exit(0));
 
@@ -78,12 +81,10 @@ public class Menu extends WindowSettings.GUIComponent {
     }
 
     private static JMenuItem currentDetails() {
-        String currentPassword = User_Auth.currentPassword;
-        Password currentPasswordObject = new Password(currentPassword, currentPassword);
-
+        String currentPassword = UserAuth.currentPassword;
         JMenuItem changePassword = new JMenuItem("Change Password");
         changePassword.addActionListener(e -> {
-            ChangePassword changePasswordFrame = new ChangePassword("Change Password", currentPasswordObject);
+            ChangePassword changePasswordFrame = new ChangePassword("Change Password", new PasswordUsage(currentUsername, currentPassword));
             changePasswordFrame.setVisible(true);
         });
         return changePassword;

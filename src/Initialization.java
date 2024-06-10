@@ -1,7 +1,7 @@
-import Management.User_Auth;
+import Management.UserAuth;
 
 public class Initialization {
     public static void main(String[] args) {
-        User_Auth.main(args); // Call the main method of User_Auth
+        UserAuth.main(args); // Call the main method of User_Auth
     }
 }

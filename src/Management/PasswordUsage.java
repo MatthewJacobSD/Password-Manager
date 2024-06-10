@@ -1,29 +1,38 @@
 package Management;
 
-import java.util.Objects;
-
 public class PasswordUsage {
-    private Password password;
 
-    public PasswordUsage(Password password){
-        setPassword(password);
+    private final String username;
+    private String password;
+    private String newPassword; // Variable to store the new password
+
+    public PasswordUsage(String username, String currentPassword) {
+        this.username = username;
+        this.password = currentPassword;
     }
 
-    public Password getPassword(){
+    public String getUsername() {
+        return String.valueOf(username); // Convert username to string
+    }
+
+    public String getPassword(){
         return password;
     }
 
-    public void setPassword(Password password){
+    public String getNewPassword() {
+        return newPassword;
+    }
+
+    public void setNewPassword(String newPassword) {
+        this.newPassword = newPassword;
+    }
+
+    public CharSequence getConfirmPassword() {
+        // Return confirm password
+        return newPassword;
+    }
+
+    public void setPassword(String password) {
         this.password = password;
-    }
-
-    @Override
-    public int hashCode(){
-        return Objects.hash(password);
-    }
-
-    @Override
-    public String toString(){
-        return "Password Usage{ password: " + password.getPassword() + "}";
     }
 }

@@ -1,6 +1,3 @@
-Add editPassword implementation
-Add Change Account implementation
-Add generate password implementation
-Add team members on contribution menu item bar as text field or table(something simple)
-add boolean question for some features to allow security
-add security dashboard to view password strength and something similar
+Change password activation Window
+Enable the access to the menu when the user succeffully register
+enable access to log in with the same credential entered to access the menu

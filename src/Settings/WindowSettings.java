@@ -15,13 +15,12 @@ public class WindowSettings {
         // This main method can be used for testing if needed
     }
 
-    // Window Setup
     public abstract static class GUIComponent extends JFrame {
         protected GUIComponent(String title) {
-            setTitle(title); // Set Title
-            setDefaultCloseOperation(DISPOSE_ON_CLOSE); // Close the window
-            setSize(700, 500); // Set Window size
-            setLocationRelativeTo(null); // Center window on the screen
+            setTitle(title);
+            setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+            setSize(700, 500);
+            setLocationRelativeTo(null);
             applyFonts(this.getContentPane());
         }
 
@@ -29,8 +28,8 @@ public class WindowSettings {
             gbc.gridx = x;
             gbc.gridy = y;
             gbc.gridwidth = width;
-            gbc.insets = new Insets(10, 10, 10, 10); // Padding
-            gbc.fill = GridBagConstraints.HORIZONTAL; // Fill horizontally
+            gbc.insets = new Insets(10, 10, 10, 10);
+            gbc.fill = GridBagConstraints.HORIZONTAL;
             panel.add(component, gbc);
         }
 
@@ -56,7 +55,6 @@ public class WindowSettings {
             }
         }
 
-        // Method to create a button with specified text and action listener
         protected JButton createButton(String text, ActionListener actionListener) {
             JButton button = new JButton(text);
             button.addActionListener(actionListener);
