@@ -8,8 +8,8 @@ import static java.awt.Font.BOLD;
 import static java.awt.Font.PLAIN;
 
 public class WindowSettings {
-    private static final Font TITLE_FONT = new Font("Arial", BOLD, 24);
-    private static final Font DEFAULT_FONT = new Font("Arial", PLAIN, 18);
+    public static final Font TITLE_FONT = new Font("Arial", BOLD, 24);
+    public static final Font DEFAULT_FONT = new Font("Arial", PLAIN, 18);
 
     public static void main(String[] args) {
         // This main method can be used for testing if needed
