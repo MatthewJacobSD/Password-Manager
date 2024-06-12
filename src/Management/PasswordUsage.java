@@ -1,5 +1,9 @@
 package Management;
 
+import DataSecurity.SecurityManager;
+
+import javax.swing.*;
+
 public class PasswordUsage {
 
     private final String username;
@@ -35,4 +39,22 @@ public class PasswordUsage {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public void viewPassword() {
+        String password = getPassword();
+        String encryptedPassword = SecurityManager.hashPassword(password);
+        String username = getUsername();
+
+        // Display the password in the format: password - [encrypted password] (username)
+        JOptionPane.showMessageDialog(null, "Password - [" + encryptedPassword + "] (" + username + ")");
+    }
+
+    public void viewGeneratedPassword() {
+        String generatedPassword = getNewPassword();
+        String username = getUsername();
+
+        // Display the generated password in the format: username: [generated password]
+        JOptionPane.showMessageDialog(null, username + ": [" + generatedPassword + "]");
+    }
+
 }

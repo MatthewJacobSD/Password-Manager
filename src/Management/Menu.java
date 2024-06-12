@@ -1,7 +1,5 @@
-import Management.ChangeAccount;
-import Management.ChangePassword;
-import Management.PasswordUsage;
-import Management.UserAuth;
+package Management;
+
 import Settings.WindowSettings;
 
 import javax.swing.*;
@@ -10,29 +8,41 @@ import java.awt.*;
 public class Menu extends WindowSettings.GUIComponent {
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            Menu menuWindow = new Menu("Menu");
-            menuWindow.setVisible(true);
-        });
+        SwingUtilities.invokeLater(() -> new Menu("Menu"));// Start the menu window
     }
 
     public Menu(String title) {
         super(title);
+        initializeComponents();
+        initializeMenu();
+        setVisible(true); // Make sure the window is visible
+    }
+
+    private void initializeComponents() {
         JPanel panel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
         JLabel titleLabel = new JLabel("Dashboard");
         JLabel subtitleLabel = new JLabel("Welcome to the dashboard, " + UserAuth.currentUsername);
-        JOptionPane.showMessageDialog(null, "-- Welcome to the Dashboard -- \n --Team 6--");
 
+        // Display welcome message
+        JOptionPane.showMessageDialog(null, "-- Welcome to the Dashboard -- \n-- Team 6 --");
+
+        // Add components to the panel
         WindowSettings.GUIComponent.addComponentToPane(panel, titleLabel, gbc, 0, 0, 2);
         WindowSettings.GUIComponent.addComponentToPane(panel, subtitleLabel, gbc, 0, 1, 2);
 
         getContentPane().add(panel);
         applyFonts(getContentPane());
 
-        initializeMenu();
-        setVisible(true); // Make sure the window is visible
+        JButton viewGeneratedPasswordButton = createButton("View Password", e -> {
+            PasswordUsage passwordUsage = new PasswordUsage(UserAuth.currentUsername, UserAuth.currentPassword);
+            passwordUsage.viewPassword();
+        });
+        WindowSettings.GUIComponent.addComponentToPane(panel, viewGeneratedPasswordButton, gbc, 0, 2, 2);
+
+        getContentPane().add(panel);
+        applyFonts(getContentPane());
     }
 
     private void initializeMenu() {
@@ -40,8 +50,6 @@ public class Menu extends WindowSettings.GUIComponent {
 
         // Left-aligned menus
         JMenu aboutMenu = new JMenu("About");
-
-        // Add contributors submenu
         JMenu contributorsMenu = new JMenu("Contributors");
         String[] contributors = {
                 "Lead project: Findlay",
@@ -54,8 +62,6 @@ public class Menu extends WindowSettings.GUIComponent {
             contributorsMenu.add(new JMenuItem(contributor));
         }
         aboutMenu.add(contributorsMenu);
-
-        // Add left-aligned menu first
         menuBar.add(aboutMenu);
 
         // Create glue to push the next menus to the right
@@ -66,8 +72,8 @@ public class Menu extends WindowSettings.GUIComponent {
         menuBar.add(accountMenu);
 
         setJMenuBar(menuBar);
-    }
 
+    }
     private JMenu getAccountMenu() {
         JMenu accountMenu = new JMenu("Account");
 
@@ -86,7 +92,7 @@ public class Menu extends WindowSettings.GUIComponent {
         JMenuItem logOut = new JMenuItem("Log out");
         logOut.addActionListener(e -> {
             dispose(); // Close the current window
-            new UserAuth.Login(); // Open the login window
+            SwingUtilities.invokeLater(UserAuth.Login::new); // Open the login window
         });
 
         accountMenu.add(changeAccount);
@@ -95,4 +101,5 @@ public class Menu extends WindowSettings.GUIComponent {
 
         return accountMenu;
     }
+
 }

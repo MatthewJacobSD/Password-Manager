@@ -59,9 +59,7 @@ public class ChangeAccount extends WindowSettings.GUIComponent {
         List<User> users = Account_Database.readAccounts();
         usernameComboBox.removeAllItems();
 
-        users.stream()
-                .filter(user -> user.getEmail().equals(email))
-                .forEach(user -> usernameComboBox.addItem(user.getUsername()));
+        users.stream().filter(user -> user.getEmail().equals(email)).forEach(user -> usernameComboBox.addItem(user.getUsername()));
     }
 
     private void switchAccount() {
@@ -69,6 +67,7 @@ public class ChangeAccount extends WindowSettings.GUIComponent {
         if (selectedUsername != null) {
             UserAuth.currentUsername = selectedUsername;
             JOptionPane.showMessageDialog(this, "Switched to account: " + selectedUsername);
+            selectedUsername = UserAuth.currentUsername;
             dispose();
             new Menu("Menu");
         } else {

@@ -7,6 +7,7 @@ import Settings.WindowSettings;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.Menu;
 import java.util.List;
 
 import static DataSecurity.SecurityManager.isPasswordGenerated;
@@ -34,7 +35,7 @@ public class UserAuth {
             JPanel panel = new JPanel(new GridBagLayout()); // Create a panel with GridBagLayout
             GridBagConstraints gbc = new GridBagConstraints(); // Create GridBagConstraints
 
-            JLabel loginTitleLabel = new JLabel("Account Login");
+            JLabel loginTitleLabel = new JLabel("Account: " + currentUsername);
             String[] labels = {"Username:", "Password:"}; // Array of label texts
             JTextField usernameField = new JTextField(15); // Username text field
             JPasswordField passwordField = new JPasswordField(15); // Password field
@@ -59,9 +60,9 @@ public class UserAuth {
                 if (validateLogin(username, password)) { // Validate login credentials
                     currentUsername = username; // Set current username
                     currentPassword = password; // Set current password
-                    dispose(); // Close the current window
-                    new Menu(); // Open the menu window
-                } else {
+                    dispose();// Close the current window
+                    SwingUtilities.invokeLater(() -> new Management.Menu("Menu"));// Initialize the Menu window after successful login
+                }else {
                     // Show error message for invalid login credentials
                     JOptionPane.showMessageDialog(null, "Invalid login credentials. Please try again.");
                 }
@@ -74,6 +75,12 @@ public class UserAuth {
                 new Register(); // Open the registration window
             });
             WindowSettings.GUIComponent.addComponentToPane(panel, registerButton, gbc, 1, labels.length + 1, 1); // Add Register button
+
+            JButton viewGeneratedPasswordButton = createButton("View Generated Password", e -> {
+                PasswordUsage passwordUsage = new PasswordUsage(currentUsername, currentPassword);
+                passwordUsage.viewGeneratedPassword();
+            });
+            WindowSettings.GUIComponent.addComponentToPane(panel, viewGeneratedPasswordButton, gbc, 2, labels.length + 1, 1);
 
             getContentPane().add(panel); // Add panel to the content pane of the window
             setVisible(true); // Set the window visible
@@ -162,6 +169,7 @@ public class UserAuth {
             JButton generatePasswordButton = createButton("Generate Password", e -> {
                 String generatedPassword = SecurityManager.generateRandomPassword(15);
                 passwordField.setText(generatedPassword);
+                confirmPasswordField.setText(generatedPassword);
             });
             WindowSettings.GUIComponent.addComponentToPane(panel, generatePasswordButton, gbc, 2, labels.length + 1, 1);
 

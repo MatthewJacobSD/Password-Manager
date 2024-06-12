@@ -164,7 +164,7 @@ public class ChangePassword extends WindowSettings.GUIComponent {
             JOptionPane.showMessageDialog(this, "Password updated successfully.");
             UserAuth.currentPassword = newPassword;
             dispose();
-            new Menu();
+            new Menu("Menu");
         } else {
             JOptionPane.showMessageDialog(this, "Failed to update password.");
         }
