@@ -195,7 +195,7 @@ public class UserAuth {
                 return false;
             }
             List<User> users = Account_Database.readAccounts(); // Read user accounts from database
-            return users.stream().noneMatch(user -> user.getEmail().equals(email)); // Check if email is not already registered
+            return users.stream().noneMatch(user -> user.getUsername().equals(username)); // Check if email is not already registered
         }
     }
 }

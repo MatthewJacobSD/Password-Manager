@@ -7,7 +7,7 @@ import javax.swing.*;
 public class PasswordUsage {
 
     private final String username;
-    private String password;
+    private final String password;
     private String newPassword; // Variable to store the new password
 
     public PasswordUsage(String username, String currentPassword) {
@@ -31,14 +31,14 @@ public class PasswordUsage {
         this.newPassword = newPassword;
     }
 
-    public CharSequence getConfirmPassword() {
-        // Return confirm password
-        return newPassword;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
+//    public CharSequence getConfirmPassword() {
+//        // Return confirm password
+//        return newPassword;
+//    }
+//
+//    public void setPassword(String password) {
+//        this.password = password;
+//    }
 
     public void viewPassword() {
         String password = getPassword();
